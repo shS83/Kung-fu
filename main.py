@@ -45,12 +45,24 @@ def matrix_rain(
         chars = katakana + ascii_set
 
     # Colors
-    def random_green() -> Tuple[int, int, int]:
-        g = random.randint(160, 255)
-        return (0, g, 0)
+    def random_green(stoic=True) -> Tuple[int, int, int]:
+        if stoic:
+            r = 0
+            b = 0
+            g = random.randint(80, 255)
+            return (r, g, b)
+        if random.random() > 0.3:
+            g = random.randint(0, 255)
+            b = random.randint(0, 255)
+            r = random.randint(0, 255)
+        else:
+            r = 0
+            b = 0
+            g = random.randint(0, 255)
+        return (r, g, b)
 
     head_color = (180, 255, 180)
-    trail_color = (0, 180, 0)
+    trail_color = random_green()
 
     # Prepare font. Monospace preferred if available.
     preferred_fonts = [
@@ -107,9 +119,9 @@ def matrix_rain(
             self.y = random.randint(-rows, 0)  # start above the screen
             self.speed = random.uniform(8.0, 20.0)  # cells per second
             if not rows:
-                self.length = random.randint(100, 5000) // 10
+                self.length = random.randint(100, 5000) // 8
             else:
-                self.length = random.randint(rows // 8, rows // 3)
+                self.length = random.randint(rows // 8, rows // 2)
             self.chars = [random.choice(chars) for _ in range(self.length)]
 
         def step(self, dt: float):
@@ -135,6 +147,7 @@ def matrix_rain(
 
     running = True
     while running:
+        trail_color = random_green()
         dt = clock.tick(fps) / 6000
 
         for event in pygame.event.get():
