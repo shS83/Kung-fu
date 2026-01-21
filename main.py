@@ -45,12 +45,18 @@ def matrix_rain(
         chars = katakana + ascii_set
 
     # Colors
-    def random_green(stoic=True) -> Tuple[int, int, int]:
-        if stoic:
-            r = 0
+    def random_green(mode=2) -> Tuple[int, int, int]:
+        if mode == 1:
+            r = random.randint(100, 255)
             b = 0
-            g = random.randint(80, 255)
+            g = 0
             return (r, g, b)
+        elif mode == 2:
+            r = 0
+            b = random.randint(100, 255)
+            g = 0
+            return (r, g, b)
+
         if random.random() > 0.3:
             g = random.randint(0, 255)
             b = random.randint(0, 255)
@@ -58,7 +64,7 @@ def matrix_rain(
         else:
             r = 0
             b = 0
-            g = random.randint(0, 255)
+            g = random.randint(100, 255)
         return (r, g, b)
 
     head_color = (180, 255, 180)
@@ -106,6 +112,10 @@ def matrix_rain(
         rows = max(1, h // cell_h)
         return cols, rows
 
+    icon = pygame.Surface((64, 64))
+    icon = render_char("A", head_color)
+    pygame.display.set_icon(icon)
+
     cols, rows = recalc_grid(screen.get_size())
 
     # Create state for each column
@@ -121,7 +131,7 @@ def matrix_rain(
             if not rows:
                 self.length = random.randint(100, 5000) // 8
             else:
-                self.length = random.randint(rows // 8, rows // 2)
+                self.length = random.randint(rows // 6, rows // 4)
             self.chars = [random.choice(chars) for _ in range(self.length)]
 
         def step(self, dt: float):
@@ -130,7 +140,7 @@ def matrix_rain(
             if self.y - self.length > rows + 2:
                 self.reset()
             # Randomly mutate characters for twinkling effect
-            if random.random() < 0.5:
+            if random.random() < 0.3:
                 idx = random.randrange(self.length)
                 self.chars[idx] = random.choice(chars)
 
